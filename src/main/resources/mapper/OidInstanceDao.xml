@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace=".dao.OidInstanceDao">
+
+    <resultMap type=".entity.OidInstance" id="OidInstanceMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="datacenterId" column="datacenter_id" jdbcType="INTEGER"/>
+        <result property="workerId" column="worker_id" jdbcType="INTEGER"/>
+        <result property="appCode" column="app_code" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 批量插入 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into sys.oid_instance(datacenter_id, worker_id, app_code, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.datacenterId}, #{entity.workerId}, #{entity.appCode}, #{entity.updateTime})
+        </foreach>
+    </insert>
+    <!-- 批量插入或按主键更新 -->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into sys.oid_instance(datacenter_id, worker_id, app_code, update_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.datacenterId}, #{entity.workerId}, #{entity.appCode}, #{entity.updateTime})
+        </foreach>
+        on duplicate key update
+         datacenter_id = values(datacenter_id) , worker_id = values(worker_id) , app_code = values(app_code) , update_time = values(update_time)     </insert>
+
+    <!--获取类型总数-->
+    <select id="selectAllCodeCount" resultType="java.lang.Long">
+        select count(*) from  oid_instance
+    </select>
+</mapper>
+
